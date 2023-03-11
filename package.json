@@ -7,10 +7,19 @@
   "scripts": {
     "start": "node ./backend/server.js",
     "server": "nodemon ./backend/server.js",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.21"
+    "eslint": "^8.36.0",
+    "eslint-config-prettier": "^8.7.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-security": "^1.7.1",
+    "nodemon": "^2.0.21",
+    "prettier": "^2.8.4"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,8 +28,49 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "express-async-handler": "^1.2.0",
+    "http-errors": "^2.0.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.1",
     "morgan": "^1.10.0"
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:prettier/recommended"
+    ],
+    "plugins": [
+      "prettier",
+      "node",
+      "security"
+    ],
+    "rules": {
+      "prettier/prettier": "error",
+      "node/no-extraneous-require": "error",
+      "node/no-missing-require": "error",
+      "node/shebang": "error",
+      "security/detect-buffer-noassert": "error",
+      "security/detect-child-process": "error",
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_"
+        }
+      ]
+    },
+    "parserOptions": {
+      "ecmaVersion": 2018,
+      "sourceType": "module"
+    },
+    "env": {
+      "es6": true,
+      "node": true
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "es5",
+    "semi": true,
+    "tabWidth": 2,
+    "printWidth": 120
   }
 }
