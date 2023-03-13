@@ -27,13 +27,15 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const { email, username, password } = req.body;
-  // Create new user
-  const user = new User({ email, username });
-  await user.setPassword(password);
+
+  // Create new user instance
+  const user = new User({ email, username, password });
+
   // Save user to database
   await user.save();
-  // Send response
-  return res.status(201).json({ message: 'User created successfully' });
+
+  // Return created user object
+  return res.status(201).json({ user });
 });
 
 // Authenticate a user

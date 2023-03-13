@@ -1,35 +1,43 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
+const userSchema = new mongoose.Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  passwordHash: {
-    type: String,
-    require: true,
-  },
-});
+  { timestamps: true }
+);
 
-userSchema.methods.setPassword = async function (password) {
-  try {
+// Hash user password before saving to database
+userSchema.pre(
+  'save',
+  asyncHandler(async function () {
     const salt = await bcrypt.genSalt(10);
-    this.passwordHash = await bcrypt.hash(password, salt);
-  } catch (error) {
-    console.error(error);
-    throw new Error('Error in setting password');
-  }
-};
+    const hashedPassword = bcrypt.hashSync(this.password, salt);
+    this.password = hashedPassword;
+  })
+);
 
-userSchema.methods.checkPassword = async function (password) {
-  return await bcrypt.compare(password, this.passwordHash);
+// Check if password is valid
+userSchema.methods.isValidPassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
 };
 
 const User = mongoose.model('User', userSchema);
